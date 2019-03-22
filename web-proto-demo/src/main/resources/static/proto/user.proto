@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.troila.cloud.microservice.user.dto";
+option java_outer_classname = "UserProto";
+
+//通过用户名密码方式登录
+message LoadUserRequest {
+	string username = 1;
+}
+message LoadUserReply {
+	int32 id = 1;
+	int64 authId = 2;
+	string name = 3;
+	string password = 4;
+	string nick = 5;
+	string telephone = 6;
+	string email = 7;
+	string userCode = 8;
+	bool disable = 9;
+}
