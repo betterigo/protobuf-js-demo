@@ -6,7 +6,6 @@
 <script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="/js/protobuf.js"></script>
 <script type="text/javascript" src="/js/ajaxsender.js"></script>
-<script type="text/javascript" src="/js/calculate.js"></script>
 <script type="text/javascript">
 function createXMLHttpRequest(){
     if(window.ActiveXObject){ //IE only
@@ -26,9 +25,21 @@ function str2bytes(str){
 }
 	var p = {username:"admin"}
 	$(function() {
+				
 		console.log("准备开始测试protobuf")
 		var ajaxSender = new AjaxSender();
-		ajaxSender.test1()
+		 ajaxSender.sendData({
+			 protoFile:'/proto/user.proto',
+			 requestTypeName:'LoadUserRequest',
+			 replyTypeName:'LoadUserReply',
+			 url:'/pb/user',
+			 type:'POST',
+			 data:{ username: "admin123" }
+		 }).then(res=>{
+			 console.log(res)
+		 }).catch(err=>{
+			 console.warn(err)
+		 })
 		$.ajax({
 			url : "/pb/t1",
 			type : 'GET',
@@ -54,7 +65,8 @@ function str2bytes(str){
 		 }
 		 var message = AwesomeMessage.create(payload);
 		 console.log(message)
-		 var buffer = AwesomeMessage.encode(message).finish();	 
+		 var buffer = AwesomeMessage.encode(message).finish();	
+		 console.log(buffer)
  		 var xhr = createXMLHttpRequest();
 		 xhr.open("POST", "/pb/user");
 		 xhr.setRequestHeader("Content-Type","application/x-protobuf");
