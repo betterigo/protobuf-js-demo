@@ -128,7 +128,7 @@
          * @param {SendOptions} opt
          * @param {function callback} callback 
          */
-        send:function(opt,callback){
+        sendData:function(opt,callback){
             if(!opt){
                 opt = {};
             }
@@ -151,9 +151,80 @@
             	}
             }
         },
-        sendData:function(opt){
+         /**
+         * @typedef SendProtoOptions
+         * @type {Object}
+         * @property {string} [responseType] default responseType = arraybuffer
+         * @property {string} [url] 请求url
+         * @property {function} [requestType] 请求需要封装的proto类型
+         * @property {function} [replyType] 返回值的proto类型
+         * @property {string} [resultType] 返回值是普通对象还是proto类型
+         */
+        /**
+         * 创建一个异步请求对象，需要提供一个回调方法和protobuffer type
+         * @param {SendProtoOptions} opt
+         * @param {function callback} callback 
+         */
+        sendProtoData:function(opt,callback){
+        	if(!opt){
+                opt = {};
+            }
+            var buffer;
+            var xhr = new XMLHttpRequest();
+            xhr.open(opt.type || options.type,options.baseUrl + opt.url);
+            xhr.setRequestHeader("Content-Type",opt.contentType || options.contentType);
+            xhr.setRequestHeader("Accept", opt.accept || options.accept);
+            if ("overrideMimeType" in xhr){			 
+                xhr.overrideMimeType("text/plain; charset=x-user-defined");
+             }
+            xhr.responseType = 'arraybuffer';
+            xhr.onreadystatechange = function fetchOnReadyStateChange() {
+                if (xhr.readyState !== 4){
+                    return undefined;
+                }
+                if (xhr.status !== 0 && xhr.status !== 200){
+                    return callback(Error("status " + xhr.status));
+                }
+                var buffer = xhr.response;
+                if(!buffer){
+                    return undefined;
+                }
+                var dataResp = new Uint8Array(buffer);
+                var result = opt.replyType.deserializeBinary(dataResp);
+                if(typeof opt.resultType === 'undefined' || opt.resultType === 'object'){
+                    return callback(result.toObject());
+                }else if(opt.replyType === 'proto'){
+                    return callback(result);
+                }
+                return callback(result);
+            }
+            try{
+                if(opt.data){
+                    buffer = opt.data.serializeBinary()
+                }
+            }catch(e){
+                return callback(e);
+            }
+            if(buffer){
+                xhr.send(buffer);
+            }else{
+                xhr.send();
+            }
+        },
+        sendPb:function(opt){
+            return new Promise((resolve, reject)=>{
+                this.sendProtoData(opt,function(res){
+                    if(res.name && res.name.indexOf('Error')!==-1){
+                        reject(res);
+                    }else{
+                        resolve(res);
+                    }
+                })
+            })
+        },
+        send:function(opt){
         	return new Promise((resolve, reject)=>{
-        			this.send(opt,function(res){
+        			this.sendData(opt,function(res){
         			if(res.name === 'Error'){
         				reject(res);
         			}else{        				

@@ -1,7 +1,6 @@
 package com.troila.cloud.microservice.user.controller;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,10 +11,10 @@ import com.troila.cloud.microservice.user.dto.LoadUserRequest;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/pb")
+@RequestMapping(path="/pb")
 public class ProtoWebController {
 	
-	@PostMapping(value="/user",produces="application/x-protobuf")
+	@PostMapping("/user")
 	public LoadUserReply test1(@RequestBody LoadUserRequest req) {
 		System.out.println(req.getUsername());
 		
@@ -27,10 +26,5 @@ public class ProtoWebController {
 		builder.setNick("张三");
 		builder.setTelephone("13822211012");
 		return builder.build();
-	}
-	
-	@GetMapping("/t1")
-	public String testStr() {
-		return "hello world";
 	}
 }
