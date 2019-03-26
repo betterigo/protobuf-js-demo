@@ -190,6 +190,9 @@
                     return undefined;
                 }
                 var dataResp = new Uint8Array(buffer);
+                if(!opt.replyType){
+                	opt.replyType = proto.Respack;
+                }
                 var result = opt.replyType.deserializeBinary(dataResp);
                 if(typeof opt.resultType === 'undefined' || opt.resultType === 'object'){
                     return callback(result.toObject());

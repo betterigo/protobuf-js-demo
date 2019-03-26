@@ -19,7 +19,7 @@ function str2bytes(str){
 $(function(){
 	var loadUserRequest = new proto.LoadUserRequest();
 	loadUserRequest.setUsername("test123")
-	var xhr = new XMLHttpRequest();
+/* 	var xhr = new XMLHttpRequest();
 	  xhr.open("POST","/pb/user");
       xhr.setRequestHeader("Content-Type","application/x-protobuf");
       xhr.setRequestHeader("Accept", "application/x-protobuf");
@@ -44,7 +44,7 @@ $(function(){
           console.log(result)
           console.log(result.toObject())
       }
-      xhr.send(loadUserRequest.serializeBinary())
+      xhr.send(loadUserRequest.serializeBinary()) */
       
       
       var ajaxSender = new AjaxSender();
@@ -52,10 +52,16 @@ $(function(){
     	  url:'/pb/user',
 		  type:'POST',
 		  data:loadUserRequest,
-		  replyType:proto.LoadUserReply,
-	//	  resultType:'proto'
+	//	  replyType:proto.LoadUserReply,
+		  resultType:'proto',
+	//	  accept:'application/x-protobuf-json'
       }).then(res=>{
     	  console.log(res)
+    	  console.log(res.getData())
+    	  var replyType = proto[res.getData().getTypeUrl()]
+    	  console.log(res.getData().getTypeUrl())
+    	  var resProto = replyType.deserializeBinary(res.getData().getValue());
+    	  console.log(resProto.toObject())
       }).catch(err=>{
     	  console.log(err)
       })
