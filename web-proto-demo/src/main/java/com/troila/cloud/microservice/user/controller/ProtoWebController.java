@@ -1,6 +1,11 @@
 package com.troila.cloud.microservice.user.controller;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,5 +31,10 @@ public class ProtoWebController {
 		builder.setNick("张三");
 		builder.setTelephone("13822211012");
 		return builder.build();
+	}
+	
+	@GetMapping("/unauth")
+	public void test401(HttpServletRequest req,HttpServletResponse resp) {
+		resp.setStatus(HttpStatus.UNAUTHORIZED.value());
 	}
 }

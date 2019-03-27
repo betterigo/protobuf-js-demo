@@ -20,7 +20,7 @@
         }
         return o;
     }
-    
+
     var typeCacheManager = {
     		add:function(protoName,typeName,protoType){
     			return typeCache.set(protoName + '_' + typeName,protoType);
@@ -191,13 +191,33 @@
                 }
                 var dataResp = new Uint8Array(buffer);
                 if(!opt.replyType){
-                	opt.replyType = proto.Respack;
+                    if(proto.Respack){
+                        opt.replyType = proto.Respack;
+                    }
                 }
-                var result = opt.replyType.deserializeBinary(dataResp);
-                if(typeof opt.resultType === 'undefined' || opt.resultType === 'object'){
-                    return callback(result.toObject());
-                }else if(opt.replyType === 'proto'){
-                    return callback(result);
+                var result;
+                if(opt.replyType){
+                    result = opt.replyType.deserializeBinary(dataResp);
+                    var typeUrl = result.getData().getTypeUrl();
+                    var resultValue;
+                    var dataProtoType;
+                    if(typeof opt.resultType === 'undefined' || opt.resultType === 'object'){
+                        if(dataProtoType=proto[typeUrl]){
+                            resultValue = dataProtoType.deserializeBinary(result.getData().getValue());
+                        }
+                        var resultObj = result.toObject();
+                        resultObj.data = resultValue.toObject();
+                        return callback(resultObj);
+                    }else if(opt.resultType === 'data'){
+                        if(dataProtoType=proto[typeUrl]){
+                            resultValue = dataProtoType.deserializeBinary(result.getData().getValue());
+                        }
+                        return callback(resultValue);
+                    }else if(opt.resultType === 'proto'){
+                        return callback(result);
+                    }
+                }else{
+                    result = dataResp;
                 }
                 return callback(result);
             }
@@ -235,6 +255,11 @@
         			}
             	})
         	})
+        },
+        addFilterBefore:function(filter){
+            if(filter && typeof filter === 'function'){
+                
+            }
         }
     }
     _global = (function () {

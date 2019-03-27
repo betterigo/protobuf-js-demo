@@ -46,22 +46,16 @@ $(function(){
       }
       xhr.send(loadUserRequest.serializeBinary()) */
       
-      
       var ajaxSender = new AjaxSender();
       ajaxSender.sendPb({
     	  url:'/pb/user',
 		  type:'POST',
 		  data:loadUserRequest,
 	//	  replyType:proto.LoadUserReply,
-		  resultType:'proto',
+	//	  resultType:'data',
 	//	  accept:'application/x-protobuf-json'
-      }).then(res=>{
+      }).then((res)=>{
     	  console.log(res)
-    	  console.log(res.getData())
-    	  var replyType = proto[res.getData().getTypeUrl()]
-    	  console.log(res.getData().getTypeUrl())
-    	  var resProto = replyType.deserializeBinary(res.getData().getValue());
-    	  console.log(resProto.toObject())
       }).catch(err=>{
     	  console.log(err)
       })

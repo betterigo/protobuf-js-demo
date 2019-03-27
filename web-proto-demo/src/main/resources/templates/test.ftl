@@ -41,7 +41,7 @@ function str2bytes(str){
 			 console.warn(err)
 		 })
 		$.ajax({
-			url : "/pb/t1",
+			url : "/pb/unauth",
 			type : 'GET',
 			cache : false,
 			contentType: "application/json",
